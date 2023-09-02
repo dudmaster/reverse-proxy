@@ -10,7 +10,6 @@ result=0
 
 hosts=(site1.com site2.com site3.com)
 nginx_path="/etc/nginx/sites-available/"
-
 result=""
 
 #create 3 wordpress/add database/add change color in wordpress 
