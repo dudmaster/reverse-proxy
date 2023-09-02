@@ -44,9 +44,9 @@ EOF
 result+="$info_http"
 if  [ -f "${nginx_path}https" ]; then
   if diff -b -w -B <(echo "$result") https >/dev/null; then
-  echo "variable and file are equal"
-  else
+    echo "variable and file are equal"
+  fi
+else
   touch "${nginx_path}https"
   echo "$result" > "${nginx_path}https"
-  fi
 fi
