@@ -20,13 +20,12 @@ jobs:
         run: ls -la
 
       - name: Check current directiory
-
         run: |
           cd ~
           cp /home/runner/work/reverse-proxy/reverse-proxy/apache_script.sh /home/runner/apache_script.sh
           cp /home/runner/work/reverse-proxy/reverse-proxy/nginx_script.sh /home/runner/nginx_script.sh
           sudo chmod 777 apache_script.sh
           sudo chmod 777 nginx_script.sh
-          #./apache_script.sh
-          #./nginx_script.sh
+          ./apache_script.sh
+          ./nginx_script.sh
           ls -ls
