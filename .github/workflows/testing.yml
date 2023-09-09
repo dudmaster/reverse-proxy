@@ -25,8 +25,9 @@ jobs:
           cp /home/runner/work/reverse-proxy/reverse-proxy/apache_new.sh /home/runner/apache_new.sh
           cp /home/runner/work/reverse-proxy/reverse-proxy/nginx_new.sh /home/runner/nginx_new.sh
           sudo chmod 777 apache_new.sh
+          sed -i -e 's/\r$//' apache_new.sh
           #sudo chmod 777 nginx_new.sh
           ls -ls
           ./apache_new.sh
-          ./nginx_new.sh
+          #./nginx_new.sh
           ls -ls
