@@ -1,26 +1,32 @@
-name: CI
+name: CI-test
 
 on:
+
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  workflow_dispatch:
+
 
 jobs:
-  build:
+  my-test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Install deps
-        run: npm ci
+      - name: Git clone my repo
+        uses: actions/checkout@v1
 
-      - name: Run test script
-        run: echo Hello, world!
+      - name: List current folder
+        run: ls -la
 
-      - name: Run reverse proxy script
+      - name: Check current directiory
+
         run: |
-          cd ♯.sh file dir
-          chmod +x ./script.sh
-          ./script.sh
+          cd ~
+          cp /home/runner/work/github-actions-test/github-actions-test/apache_script.sh /home/runner/apache_script.sh
+          cp /home/runner/work/github-actions-test/github-actions-test/nginx_script.sh /home/runner/nginx_script.sh
+          sudo chmod 777 apache_script.sh
+          sudo chmod 777 nginx_script.sh
+          ./apache_script.sh
+          ./nginx_script.sh
+          ls -ls
