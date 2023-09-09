@@ -1,32 +1,45 @@
 #!/bin/bash
 hosts=(site1.com site2.com site3.com)
-#nginx_path="/etc/nginx/sites-available/"
-ngnix_path="/home/runner/"
+nginx_path="/etc/nginx/sites-available/"
+nginx_path_enabled="/etc/nginx/sites-enabled/"
+nginx_ssl_path="/etc/nginx/ssl"
+nginx_ssl_crt="ssl-k.crt"
+nginx_ssl_key="ssl-k.key"
+proxy_set_header_host="$""host"
+proxy_set_header_remote="$""remote_addr"
+request_uri="$""request_uri"
+
 result=""
+
 
 for (( i = 0; i < "${#hosts[*]}"; i++ ))
 do
+
 info_https=$(cat <<EOF
 
 server {
-        root /var/www/${hosts[i]};
-        index index.html index.htm index.nginx-debian.html;
-
-        server_name www.${hosts[i]} ${hosts[i]};
-
         listen 443 ssl;
         listen [::]:443 ssl;
-        include snippets/self-signed.conf;
-        include snippets/ssl-params.conf;
+
+	ssl_certificate ${nginx_ssl_path}/${nginx_ssl_crt};
+        ssl_certificate_key ${nginx_ssl_path}/${nginx_ssl_key};
+        
+	server_name www.${hosts[i]} ${hosts[i]};
+
+	root /var/www/${hosts[i]};
+        index index.html index.htm index.nginx-debian.html;
+
 
         location / {
                 proxy_pass http://${hosts[i]}:8080;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real_IP $remote_addr;
+		proxy_set_header Host $proxy_set_header_host;
+                proxy_set_header X-Real_IP $proxy_set_header_remote;
         }
 }
 EOF
 )
+
+
 result+="$info_https"
 done
 
@@ -36,17 +49,37 @@ server {
         listen 80;
         listen [::]:80;
         server_name ${hosts[@]};
-        return 301 https://$server_name$request_uri;
+        return 301 https://$proxy_set_header_host$request_uri;
 }
 EOF
 )
 
 result+="$info_http"
+
+if ! [ -d "${nginx_ssl_path}" ]; then
+  sudo mkdir "${nginx_ssl_path}"
+  sudo chmod 700 "${nginx_ssl_path}"
+  if ! [ -f "${nginx_ssl_path}/${nginx_ssl_key}"]; then
+    sudo touch "${nginx_ssl_path}/${nginx_ssl_key}"
+  fi
+  if ! [ -f "${nginx_ssl_path}/${nginx_ssl_crt}"]; then
+    sudo touch "${nginx_ssl_path}/${nginx_ssl_key}"
+  fi
+  sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "${nginx_ssl_path}/${nginx_ssl_key}" -out "${nginx_ssl_path}/${nginx_ssl_crt}"
+fi
+if  [ -f "${nginx_path}default" ]; then
+  sudo rm "${nginx_path}default"
+fi
+if  [ -f "${nginx_path_enabled}default" ]; then
+  sudo rm -f "${nginx_path_enabled}default"
+fi
+
 if  [ -f "${nginx_path}https" ]; then
   if diff -b -w -B <(echo "$result") https >/dev/null; then
-    echo "variable and file are equal"
+  echo "variable and file are equal"
   fi
 else
-  touch "${nginx_path}https"
+  sudo touch "${nginx_path}https"
   echo "$result" > "${nginx_path}https"
+  sudo ln -s "${nginx_path}https" "${nginx_path_enabled}https"
 fi
