@@ -1,7 +1,7 @@
 #!/bin/bash
 hosts=(site1.com site2.com site3.com)
-nginx_path="/etc/nginx/sites-available/"
-#ngnix_path="/home/pavel/"
+#nginx_path="/etc/nginx/sites-available/"
+ngnix_path="/home/runner/"
 result=""
 
 for (( i = 0; i < "${#hosts[*]}"; i++ ))
