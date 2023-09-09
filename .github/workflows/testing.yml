@@ -26,8 +26,9 @@ jobs:
           cp /home/runner/work/reverse-proxy/reverse-proxy/nginx_script.sh /home/runner/nginx_script.sh
           sudo chmod 777 apache_script.sh
           sed -i -e 's/\r$//' apache_script.sh
-          #sudo chmod 777 nginx_script.sh
+          sudo chmod 777 nginx_script.sh
+          sed -i -e 's/\r$//' nginx_script.sh
           ls -ls
           ./apache_script.sh
-          #./nginx_script.sh
+          ./nginx_script.sh
           ls -ls
