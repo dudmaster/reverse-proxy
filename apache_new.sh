@@ -30,9 +30,10 @@ EOF
       echo "$info_apache" > "${apache_path}${hosts[i]}.conf"
       result=0
     fi
-  if diff -b -w -B <(echo "$info_apache") "${apache_path}${hosts[i]}.conf" >/dev/null; then
+  if diff -b -w -B <(echo "$info_apache") "${apache_path}${hosts[i]}.conf" >/d$
     echo "file equal"
   else
     echo "$info_apache" > "${apache_path}${hosts[i]}.conf"
   fi
 done
+
