@@ -26,12 +26,12 @@ server {
         
 	server_name www.${hosts[i]} ${hosts[i]};
 
-	#root /var/www/${hosts[i]};
-        #index index.html index.htm index.nginx-debian.html;
+	root /var/www/${hosts[i]};
+        index index.php index.html index.htm index.nginx-debian.html;
 
 
         location / {
-                proxy_pass http://${ip_vm}:8080;
+                proxy_pass http://${hosts[i]}:8080;
 		#proxy_set_header Host $proxy_set_header_host;
                 #proxy_set_header X-Real_IP $proxy_set_header_remote;
         }
@@ -48,7 +48,7 @@ info_http=$(cat <<EOF
 server {
         listen 80 default_server;
         server_name ${hosts[@]};
-        return 301 https://$proxy_set_header_host$request_uri;
+        return 301 https://${ip_vm};
 }
 EOF
 )
