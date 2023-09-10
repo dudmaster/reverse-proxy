@@ -1,4 +1,4 @@
-!/bin/sh
+#!/bin/sh
 DB_NAMES="wp_db1 wp_db2 wp_db3"
 DB_USERS="wp_user1 wp_user2 wp_user3"
 pass=password
