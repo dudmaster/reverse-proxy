@@ -8,7 +8,7 @@ nginx_ssl_key="ssl-k.key"
 proxy_set_header_host="$""host"
 proxy_set_header_remote="$""remote_addr"
 request_uri="$""request_uri"
-
+ip_vm="192.168.56.110"
 result=""
 
 
@@ -26,14 +26,14 @@ server {
         
 	server_name www.${hosts[i]} ${hosts[i]};
 
-	root /var/www/${hosts[i]};
-        index index.html index.htm index.nginx-debian.html;
+	#root /var/www/${hosts[i]};
+        #index index.html index.htm index.nginx-debian.html;
 
 
         location / {
-                proxy_pass http://${hosts[i]}:8080;
-		proxy_set_header Host $proxy_set_header_host;
-                proxy_set_header X-Real_IP $proxy_set_header_remote;
+                proxy_pass http://${ip_vm}:8080;
+		#proxy_set_header Host $proxy_set_header_host;
+                #proxy_set_header X-Real_IP $proxy_set_header_remote;
         }
 }
 EOF
@@ -46,8 +46,7 @@ done
 info_http=$(cat <<EOF
 
 server {
-        listen 80;
-        listen [::]:80;
+        listen 80 default_server;
         server_name ${hosts[@]};
         return 301 https://$proxy_set_header_host$request_uri;
 }
@@ -67,13 +66,12 @@ if ! [ -d "${nginx_ssl_path}" ]; then
   fi
   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout "${nginx_ssl_path}/${nginx_ssl_key}" -out "${nginx_ssl_path}/${nginx_ssl_crt}"
 fi
-if  [ -f "${nginx_path}default" ]; then
-  sudo rm "${nginx_path}default"
-fi
 if  [ -f "${nginx_path_enabled}default" ]; then
   sudo rm -f "${nginx_path_enabled}default"
 fi
-
+if  [ -f "${nginx_path}default" ]; then
+  sudo rm "${nginx_path}default"
+fi
 if  [ -f "${nginx_path}https" ]; then
   if diff -b -w -B <(echo "$result") https >/dev/null; then
   echo "variable and file are equal"
@@ -82,4 +80,5 @@ else
   sudo touch "${nginx_path}https"
   echo "$result" > "${nginx_path}https"
   sudo ln -s "${nginx_path}https" "${nginx_path_enabled}https"
+  sudo systemctl restart nginx.service
 fi

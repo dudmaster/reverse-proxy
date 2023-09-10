@@ -32,6 +32,7 @@ EOF
       sudo a2dissite 000-default.conf
       sudo a2ensite "${hosts[i]}"
       result=0
+      sudo systemctl restart apache
     fi
   if diff -b -w -B <(echo "$info_apache") "${apache_path}${hosts[i]}.conf" >/dev/null; then
     echo "file equal"
