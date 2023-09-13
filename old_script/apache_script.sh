@@ -2,7 +2,6 @@
 hosts=(site1.com site2.com site3.com)
 apache_path="/etc/apache2/sites-available/"
 apache_ports="/etc/apache2/ports.conf"
-apache_log_dir="$""{APACHE_LOG_DIR}"
 result=0
 
 for (( i = 0; i < "${#hosts[*]}"; i++ )); do
@@ -14,8 +13,8 @@ for (( i = 0; i < "${#hosts[*]}"; i++ )); do
         ServerAdmin ${hosts[i]}-webmaster@localhost
         DocumentRoot /var/www/${hosts[i]}
 
-        ErrorLog $apache_log_dir/${hosts[i]}-error.log
-        CustomLog $apache_log_dir/${hosts[i]}-access.log combined
+        ErrorLog ${APACHE_LOG_DIR}/${hosts[i]}-error.log
+        CustomLog ${APACHE_LOG_DIR}/${hosts[i]}-access.log combined
 </VirtualHost>
 EOF
 )
@@ -33,7 +32,7 @@ EOF
       sudo a2dissite 000-default.conf
       sudo a2ensite "${hosts[i]}"
       result=0
-      sudo systemctl restart apache2
+      sudo systemctl restart apache
     fi
   if diff -b -w -B <(echo "$info_apache") "${apache_path}${hosts[i]}.conf" >/dev/null; then
     echo "file equal"

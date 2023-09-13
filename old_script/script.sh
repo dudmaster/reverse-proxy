@@ -1,11 +1,15 @@
 #!/bin/bash
 
 
+
+
+
+
 #create 3 wordpress/add database/add change color in wordpress 
 hosts=(site1.com site2.com site3.com)
-path1="/var/www/${hosts[0]}"
-path2="/var/www/${hosts[1]}"
-path3="/var/www/${hosts[2]}"
+path1="/var/www/html/${hosts[0]}"
+path2="/var/www/html/${hosts[1]}"
+path3="/var/www/html/${hosts[2]}"
 style_file1=$path1/wp-admin/css/colors/light/colors-rtl.css
 style_file2=$path2/wp-admin/css/colors/light/colors-rtl.css
 style_file3=$path3/wp-admin/css/colors/light/colors-rtl.css
@@ -14,12 +18,12 @@ greencolor="##16ed0e"
 yellowcolor="#c5f005"
 
 cd /tmp && wget https://wordpress.org/latest.tar.gz
-sudo tar -xvf /tmp/latest.tar.gz -C /var/www
-sudo mv /var/www/wordpress "$path1"
+sudo tar -xvf /tmp/latest.tar.gz -C /var/www/html
+sudo mv /var/www/html/wordpress "$path1"
 sudo cp -r "$path1" "$path2"
 sudo cp -r "$path1" "$path3"
-sudo chown -R www-data:www-data /var/www/
-sudo chmod -R 755 /var/www/
+sudo chown -R www-data:www-data /var/www/html/
+sudo chmod -R 755 /var/www/html/
 sudo mkdir $path1/wp-content/uploads
 sudo mkdir $path2/wp-content/uploads
 sudo mkdir $path3/wp-content/uploads

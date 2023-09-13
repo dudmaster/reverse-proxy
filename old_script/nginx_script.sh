@@ -6,7 +6,9 @@ nginx_ssl_path="/etc/nginx/ssl"
 nginx_ssl_crt="ssl-k.crt"
 nginx_ssl_key="ssl-k.key"
 proxy_set_header_host="$""host"
+proxy_set_header_remote="$""remote_addr"
 request_uri="$""request_uri"
+ip_vm="192.168.56.110"
 result=""
 
 
@@ -16,30 +18,42 @@ do
 info_https=$(cat <<EOF
 
 server {
-	server_name www.${hosts[i]} ${hosts[i]};
-        
-	location / {
-		include /etc/nginx/proxy_params;
-                proxy_pass http://localhost:8080;
-        }
+        listen 443 ssl;
+        listen [::]:443 ssl;
 
-	listen 443 ssl;
 	ssl_certificate ${nginx_ssl_path}/${nginx_ssl_crt};
         ssl_certificate_key ${nginx_ssl_path}/${nginx_ssl_key};
-}
+        
+	server_name www.${hosts[i]} ${hosts[i]};
 
-server {
-	if ($hproxy_set_header_host = www.${hosts[i]}) {
-		return 301 https://$proxy_set_header_host$request_uri
-	}
-	listen 80;
-	return 404;
+	root /var/www/${hosts[i]};
+        index index.php index.html index.htm index.nginx-debian.html;
+
+
+        location / {
+                proxy_pass http://${hosts[i]}:8080;
+		#proxy_set_header Host $proxy_set_header_host;
+                #proxy_set_header X-Real_IP $proxy_set_header_remote;
+        }
 }
 EOF
 )
+
+
 result+="$info_https"
 done
 
+info_http=$(cat <<EOF
+
+server {
+        listen 80 default_server;
+        server_name ${hosts[@]};
+        return 301 https://${ip_vm};
+}
+EOF
+)
+
+result+="$info_http"
 
 if ! [ -d "${nginx_ssl_path}" ]; then
   sudo mkdir "${nginx_ssl_path}"
