@@ -2,7 +2,7 @@
 hosts=(site1.com site2.com site3.com)
 apache_path="/etc/apache2/sites-available/"
 apache_ports="/etc/apache2/ports.conf"
-apache_log_dir="$""{APACHE_LOG_DIR}"
+apache_log_dir="/var/log/apache2"
 result=0
 
 for (( i = 0; i < "${#hosts[*]}"; i++ )); do

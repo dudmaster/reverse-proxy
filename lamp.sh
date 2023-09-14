@@ -10,10 +10,10 @@ fi
 
 for (( i = 0; i < "${#DB_NAMES[*]}"; i++ ))
 do
-  if ! mysql -uroot -e "USE $DB_NAMES[i]" 2>/dev/null; then
+  if ! mysql -uroot -e "USE ${DB_NAMES[i]}" 2>/dev/null; then
     mysql -uroot -e "CREATE DATABASE ${DB_NAMES[i]};"
   fi
-  if ! mysql -uroot -e "SELECT User FROM mysql.user WHERE User='$DB_USERS[i]'" | grep "$DB_USER"; then
+  if ! mysql -uroot -e "SELECT User FROM mysql.user WHERE User='${DB_USERS[i]}'" | grep "${DB_USERS[i]}"; then
     mysql -uroot -e "CREATE USER '${DB_USERS[i]}'@'localhost' IDENTIFIED BY 'password';"
     mysql -uroot -e "GRANT ALL PRIVILEGES ON ${DB_NAMES[i]}.* TO '${DB_USERS[i]}'@'localhost';"
     mysql -uroot -e "FLUSH PRIVILEGES;"
