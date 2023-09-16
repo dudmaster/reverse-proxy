@@ -18,6 +18,25 @@ wp_siteurl="'WP_SITEURL'"
 wp_home="'WP_HOME'"
 wget https://wordpress.org/latest.tar.gz -P /tmp/
 sudo tar -xvf /tmp/latest.tar.gz -C $path
+wp_ser="$""_SERVER"
+https_wp=$(cat << EOF
+if ( $wp_ser['HTTP_X_FORWARDED_PROTO'] == 'https' )
+{
+        $wp_ser['HTTPS']       = 'on';
+    $wp_ser['SERVER_PORT'] = '443';
+        define('FORCE_SSL_ADMIN', true);
+}
+ 
+if ( isset($wp_ser['HTTP_X_FORWARDED_HOST']) )
+{
+        $wp_ser['HTTP_HOST'] = $wp_ser['HTTP_X_FORWARDED_HOST'];
+}
+EOF
+)
+
+sudo touch https_wp.txt
+sudo chmod 777 https_wp.txt
+echo "$https_wp" > https_wp.txt </dev/null
 
 for (( i = 0; i < "${#hosts[*]}"; i++ ))
 do
@@ -28,9 +47,9 @@ do
   sudo sed -i "s/username_here/${DB_USERS[i]}/" $path/${hosts[i]}/$wp_config
   sudo sed -i "s/password_here/${password}/" $path/${hosts[i]}/$wp_config
   sudo sed -i "s/background: $default_color;/background: ${colors[i]};/g" $path/${hosts[i]}/$default_path_color
-  sed -i '1 a\define( '$wp_siteurl', '"'https://www.${hosts[i]}'"' );' $path/${hosts[i]}/$wp_config
-  sed -i '2 a\define( '$wp_home', '"'https://www.${hosts[i]}'"' );' $path/${hosts[i]}/$wp_config
-
+  sudo sed -i '1 a\define( '$wp_siteurl', '"'https://www.${hosts[i]}'"' );' $path/${hosts[i]}/$wp_config
+  sudo sed -i '2 a\define( '$wp_home', '"'https://www.${hosts[i]}'"' );' $path/${hosts[i]}/$wp_config
+  sudo sed -i "3r https_wp.txt" $path/${hosts[i]}/$wp_config
 done
 
 sudo chown -R www-data:www-data $path/
