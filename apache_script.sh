@@ -27,6 +27,10 @@ EOF
       echo "File ${hosts[i]}.conf was found"
     fi
   done
+
+    if ! grep -q "Listen 8080" "${apache_ports}"; then
+      sudo sed -i 's/Listen 80/Listen 8080/' "${apache_ports}"
+    fi
     if [[ "$result" = 0 ]]; then
       touch "${apache_path}${hosts[i]}.conf"
       echo "$info_apache" > "${apache_path}${hosts[i]}.conf"
@@ -41,8 +45,3 @@ EOF
     echo "$info_apache" > "${apache_path}${hosts[i]}.conf"
   fi
 done
-
-if ! grep -q "Listen 8080" "${apache_ports}"; then
-  sudo sed -i 's/Listen 80/Listen 8080/' "${apache_ports}"
-fi
-
