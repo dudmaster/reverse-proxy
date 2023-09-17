@@ -29,11 +29,9 @@ server {
 }
 
 server {
-	if ($proxy_set_header_host = www.${hosts[i]}) {
-		return 301 https://$proxy_set_header_host$request_uri;
-	}
 	listen 80;
-	return 404;
+	server_name www.${hosts[i]} ${hosts[i]};
+	return 301 https://$proxy_set_header_host$request_uri;
 }
 EOF
 )
