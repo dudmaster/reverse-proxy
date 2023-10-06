@@ -180,7 +180,7 @@ fi
 for (( i = 0; i < "${#hosts[*]}"; i++ ))
 do
   if [ ! -d "$path_www/${hosts[i]}" ]; then
-    cp -r $path_www/wordpress $path/${hosts[i]}
+    cp -r $path_www/wordpress $path_www/${hosts[i]}
     mkdir $path_www/${hosts[i]}/$wp_content
   fi
   if [ ! -f "$path_www/${hosts[i]}/$wp_config" ];then
